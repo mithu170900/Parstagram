@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Parse
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -16,8 +17,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+        
+        // Add event listener for when user logs out
+        NotificationCenter.default.addObserver(forName: Notification.Name("login"), object: nil, queue: OperationQueue.main) { (Notification) in
+            print("Logout notification received")
+            //Load and show Login view controller
+            self.login()
+        }
+        
+        // Add event listener for when user logs out
+       // NotificationCenter.default.addObserver(forName: Notification.Name("didLogout"), object: nil, queue: OperationQueue.main) { (Notification) in
+         //   print("Logout notification received")
+          //  self.logOut()
+        //}
+        
+        // Add User persistence across app restarts
+        if PFUser.current() != nil {
+            login()
+        }
         guard let _ = (scene as? UIWindowScene) else { return }
     }
+    
+    func login() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        // View Controller currently being set in Storyboard as default will be overriden
+        window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FeedNavigationController")
+    }
+    
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
@@ -30,6 +56,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
     }
+    
+    
 
     func sceneWillResignActive(_ scene: UIScene) {
         // Called when the scene will move from an active state to an inactive state.
